@@ -41,7 +41,6 @@ const AdherentDialog = () => {
 
   const addAdherentMutation = useMutation(
     async (newAdherent: z.infer<typeof AddAdherentSchema>) => {
-      // Explicitly type the parameter
       const response = await fetch("/api/addNewAdherent", {
         method: "POST",
         headers: {
@@ -109,7 +108,7 @@ const AdherentDialog = () => {
               name="name"
               render={({ field }) => (
                 <FormItem className="grid grid-cols-4 items-center gap-4">
-                  <FormLabel className="text-right">Username</FormLabel>
+                  <FormLabel className="text-right">Nom Prénom</FormLabel>
                   <FormControl>
                     <Input className="col-span-3" {...field} />
                   </FormControl>

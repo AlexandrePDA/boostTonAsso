@@ -1,5 +1,21 @@
+"use client";
 import { fetchAdherents } from "@/lib/fetchQuery";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
+import * as React from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useState } from "react";
+import { Trash2, Search, BadgeCheck, BadgeX } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import DataEmpty from "@/components/DataEmpty";
+import { Label } from "@/components/ui/label";
 
 interface Adherent {
   id: string;
@@ -10,83 +26,145 @@ interface Adherent {
 }
 
 export const TableauAdherent = () => {
+  const queryClient = useQueryClient();
   const { data, isLoading, isError, error } = useQuery(
     "adherents",
     fetchAdherents
   );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+  const [showOnlyVolunteers, setShowOnlyVolunteers] = useState(false);
 
-  if (isLoading) return <div>Loading...</div>;
+  const handleCheckboxChange = (email: string) => {
+    setCheckedIds((prev) => {
+      // tous les emails cochés sont stockés ici
+      const newChecked = new Set(prev);
+      if (newChecked.has(email)) {
+        newChecked.delete(email);
+      } else {
+        newChecked.add(email);
+      }
+      return newChecked;
+    });
+  };
+
+  if (isLoading) return <div>Chargement...</div>;
   if (isError) return <div>Error</div>;
 
+  const filteredData = data.filter((adherent: Adherent) => {
+    const matchesSearchTerm =
+      adherent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      adherent.emailAdherent.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      adherent.telephoneAdherent
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+    return showOnlyVolunteers
+      ? matchesSearchTerm && adherent.benevolAdherent
+      : matchesSearchTerm;
+  });
+
+  if (data.length === 0) return <DataEmpty context="adherent" />;
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`/api/deleteAdherent`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: id }),
+      });
+      if (response.ok) {
+        toast.success("Adherent supprimé avec succès");
+        queryClient.invalidateQueries("adherents");
+      } else {
+        throw new Error("Failed to delete the adherent");
+      }
+    } catch (error) {
+      toast.error("Erreur lors de la suppression de l'adhérent ");
+    }
+  };
+
   return (
-    <div className="flex flex-col mt-6">
-      <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-          <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead>
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                  >
-                    Nom Prénom
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                  >
-                    Email
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                  >
-                    Téléphone
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                  >
-                    Bénévole
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                  >
-                    Modifier
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                {data.map((adherent: Adherent) => (
-                  <tr key={adherent.id}>
-                    <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                      {adherent.name}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                      {adherent.emailAdherent}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                      {adherent.telephoneAdherent}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                      {adherent.benevolAdherent ? "Oui" : "Non"}
-                    </td>
-                    <td className="px-4 py-4 text-sm whitespace-nowrap">
-                      <button className="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none">
-                        {/* Icone de modification ici */}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+    <>
+      <div className="flex items-center  gap-2 my-8">
+        <Search />
+        <Input
+          type="text"
+          placeholder="Chercher par nom, email ou téléphone..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className=" p-2 border rounded w-[400px] "
+        />
+        <div className="p-2 flex items-center gap-2">
+          <Input
+            id="showOnlyVolunteers"
+            className="size-4"
+            type="checkbox"
+            checked={showOnlyVolunteers}
+            onChange={(e) => setShowOnlyVolunteers(e.target.checked)}
+          />
+          <Label htmlFor="showOnlyVolunteers" className="text-gray-600">
+            Afficher uniquement les bénévoles
+          </Label>
         </div>
       </div>
 
-      {/* TEST */}
-    </div>
+      <Table>
+        <TableHeader className="bg-gray-100 ">
+          <TableRow>
+            <TableHead className="w-[100px]">Selection</TableHead>
+            <TableHead>Nom Prénom</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Téléphone</TableHead>
+            <TableHead>Bénévole</TableHead>
+            <TableHead className="text-right">Suppression</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredData.map((adherent: Adherent) => (
+            <TableRow
+              key={adherent.id}
+              style={{
+                backgroundColor: checkedIds.has(adherent.emailAdherent)
+                  ? "#f0f0f0"
+                  : "transparent",
+              }}
+            >
+              <TableCell>
+                <input
+                  type="checkbox"
+                  value={adherent.id}
+                  checked={checkedIds.has(adherent.emailAdherent)}
+                  onChange={() => handleCheckboxChange(adherent.emailAdherent)}
+                />
+              </TableCell>
+              <TableCell className="font-medium">{adherent.name}</TableCell>
+              <TableCell>
+                {adherent.emailAdherent === "" ? "-" : adherent.emailAdherent}
+              </TableCell>
+              <TableCell>
+                {adherent.telephoneAdherent === ""
+                  ? "-"
+                  : adherent.telephoneAdherent}
+              </TableCell>
+              <TableCell className="text-right ">
+                {adherent.benevolAdherent ? (
+                  <BadgeCheck className="text-emerald-500" />
+                ) : (
+                  <BadgeX className="text-red-500" />
+                )}
+              </TableCell>
+              <TableCell className="text-right flex items-center justify-end">
+                <Trash2
+                  className="hover:text-red-400 text-gray-400 cursor-pointer"
+                  onClick={() => handleDelete(adherent.id)}
+                />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </>
   );
 };

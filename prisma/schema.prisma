@@ -39,10 +39,10 @@ model Session {
 
 // User = asso
 model User {
-  id                       String     @id @default(cuid())
+  id                       String         @id @default(cuid())
   nameAsso                 String?
-  isPremium                Boolean    @default(false)
-  email                    String?    @unique
+  isPremium                Boolean        @default(false)
+  email                    String?        @unique
   emailVerified            DateTime?
   password                 String?
   accounts                 Account[]
@@ -51,8 +51,9 @@ model User {
   adherent                 Adherent[]
   idea                     Idea[]
   team                     Team[]
-  createdAt                DateTime   @default(now())
-  resetPasswordToken       String?    @unique
+  partenariats             Partenariats[]
+  createdAt                DateTime       @default(now())
+  resetPasswordToken       String?        @unique
   resetPasswordTokenExpiry DateTime?
 }
 
@@ -102,6 +103,15 @@ model Team {
   numberTeam String?
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Partenariats {
+  id              String   @id @default(cuid())
+  userId          String
+  namePartenariat String
+  domaine         String?
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

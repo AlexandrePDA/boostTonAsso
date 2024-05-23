@@ -7,6 +7,7 @@ import {
   Lightbulb,
   Star,
   Settings2,
+  HeartHandshake,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -65,6 +66,16 @@ export const SideBar = ({ nameAsso }: PropsSideBar) => {
             </div>
           </Link>
 
+          <Link
+            className="flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg  hover:bg-gray-100  dark:hover:text-gray-200 hover:text-gray-700 focus:bg-gray-100"
+            href="/dashboard/partenariat"
+          >
+            <div className="flex items-center gap-2">
+              <HeartHandshake />
+              <span className="mx-2 text-sm font-medium">Partenariats</span>
+            </div>
+          </Link>
+
           {/* IDEES */}
           <Link
             className="flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg  hover:bg-gray-100  dark:hover:text-gray-200 hover:text-gray-700 focus:bg-gray-100"
@@ -90,10 +101,12 @@ export const SideBar = ({ nameAsso }: PropsSideBar) => {
 
         <div className="mt-6">
           <div className="flex items-center justify-between mt-6">
-            <div className="flex items-center gap-2">
-              <CircleUser />
+            <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
+                <CircleUser />
+              </div>
+              <span className="text-sm font-medium">{nameAsso}</span>
             </div>
-            <span className="text-sm font-medium ">{nameAsso}</span>
             <ButtonSignOut />
           </div>
         </div>
