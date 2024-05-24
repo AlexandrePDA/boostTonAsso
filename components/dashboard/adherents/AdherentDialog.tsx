@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,9 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { UserRoundPlus } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { AddAdherentSchema } from "@/lib/formSchema";
@@ -30,6 +28,18 @@ import { z } from "zod";
 const AdherentDialog = () => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setIsOpen((open) => !open);
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
+
   const form = useForm<z.infer<typeof AddAdherentSchema>>({
     resolver: zodResolver(AddAdherentSchema),
     defaultValues: {
@@ -76,7 +86,12 @@ const AdherentDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger>
-        <UserRoundPlus />
+        <div className="flex items-center gap-2 border border-gray-200 rounded-lg p-2">
+          <p className="text-sm text-gray-500">Ajouter un adhérent</p>
+          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 ">
+            <span className="text-lg">⌘</span>K
+          </kbd>
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

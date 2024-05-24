@@ -42,4 +42,6 @@ Ce projet est un boilerplate pour construire des applications web avec Next.js e
 
 @/lib/mail.ts : modifier "from" par votre adresse mail
 
+https://developers.notion.com/docs/create-a-notion-integration
+
 @Made with ❤️ by @AlexandrePDA

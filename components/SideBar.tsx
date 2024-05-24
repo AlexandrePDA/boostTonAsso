@@ -1,3 +1,4 @@
+"use client";
 import ButtonSignOut from "./ButtonSignOut";
 import {
   CircleUser,
@@ -9,6 +10,7 @@ import {
   Settings2,
   HeartHandshake,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 interface PropsSideBar {
@@ -16,6 +18,9 @@ interface PropsSideBar {
 }
 
 export const SideBar = ({ nameAsso }: PropsSideBar) => {
+  const pathname = usePathname();
+
+  console.log(pathname);
   return (
     <aside className="sticky top-0 flex flex-col w-64 h-screen px-5 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
       <h2 className="mx-2 mb-4">Nom du site</h2>
@@ -23,18 +28,22 @@ export const SideBar = ({ nameAsso }: PropsSideBar) => {
         <nav className="flex-1 -mx-3 space-y-3 ">
           {/* HOME */}
           <Link
-            className="flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg focus:bg-gray-100  hover:bg-gray-100 hover:text-gray-700"
+            className={`flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg focus:bg-gray-100  hover:bg-gray-100 hover:text-gray-700 ${
+              pathname === "/dashboard" ? "bg-gray-100" : ""
+            }`}
             href="/dashboard"
           >
             <div className="flex items-center gap-2">
               <Activity />
-              <span className="mx-2 text-sm font-medium">L'association</span>
+              <span className="mx-2 text-sm font-medium">Tableau de bord</span>
             </div>
           </Link>
 
           {/* Dashboard */}
           <Link
-            className="flex items-center px-3 py-2  transition-colors duration-300 transform focus:bg-gray-100 rounded-lg  hover:bg-gray-100 dark:hover:bg-gray-800  hover:text-gray-700"
+            className={`flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg focus:bg-gray-100  hover:bg-gray-100 hover:text-gray-700 ${
+              pathname === "/dashboard/evenements" ? "bg-gray-100" : ""
+            }`}
             href="/dashboard/evenements"
           >
             <div className="flex items-center gap-2">
@@ -45,7 +54,9 @@ export const SideBar = ({ nameAsso }: PropsSideBar) => {
 
           {/* USERS */}
           <Link
-            className="flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg focus:bg-gray-100  hover:bg-gray-100 hover:text-gray-700"
+            className={`flex items-center px-3 py-2  transition-colors duration-3000 transform rounded-lg focus:bg-gray-100  hover:bg-gray-100 hover:text-gray-700 ${
+              pathname === "/dashboard/team" ? "bg-gray-100" : ""
+            }`}
             href="/dashboard/team"
           >
             <div className="flex items-center gap-2">
@@ -57,7 +68,9 @@ export const SideBar = ({ nameAsso }: PropsSideBar) => {
           </Link>
 
           <Link
-            className="flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg  hover:bg-gray-100  dark:hover:text-gray-200 hover:text-gray-700 focus:bg-gray-100"
+            className={`flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg focus:bg-gray-100  hover:bg-gray-100 hover:text-gray-700 ${
+              pathname === "/dashboard/adherents" ? "bg-gray-100" : ""
+            }`}
             href="/dashboard/adherents"
           >
             <div className="flex items-center gap-2">
@@ -67,7 +80,9 @@ export const SideBar = ({ nameAsso }: PropsSideBar) => {
           </Link>
 
           <Link
-            className="flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg  hover:bg-gray-100  dark:hover:text-gray-200 hover:text-gray-700 focus:bg-gray-100"
+            className={`flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg focus:bg-gray-100  hover:bg-gray-100 hover:text-gray-700 ${
+              pathname === "/dashboard/partenariat" ? "bg-gray-100" : ""
+            }`}
             href="/dashboard/partenariat"
           >
             <div className="flex items-center gap-2">
@@ -78,7 +93,9 @@ export const SideBar = ({ nameAsso }: PropsSideBar) => {
 
           {/* IDEES */}
           <Link
-            className="flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg  hover:bg-gray-100  dark:hover:text-gray-200 hover:text-gray-700 focus:bg-gray-100"
+            className={`flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg focus:bg-gray-100  hover:bg-gray-100 hover:text-gray-700 ${
+              pathname === "/dashboard/idees" ? "bg-gray-100" : ""
+            }`}
             href="/dashboard/idees"
           >
             <div className="flex items-center gap-2">
@@ -89,7 +106,9 @@ export const SideBar = ({ nameAsso }: PropsSideBar) => {
 
           {/* SETTINGS */}
           <Link
-            className="flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-100"
+            className={`flex items-center px-3 py-2  transition-colors duration-300 transform rounded-lg focus:bg-gray-100  hover:bg-gray-100 hover:text-gray-700 ${
+              pathname === "/dashboard/parametres" ? "bg-gray-100" : ""
+            }`}
             href="/dashboard/parametres"
           >
             <div className="flex items-center gap-2">

@@ -39,16 +39,31 @@ export const TableauAdherent = () => {
 
   const handleCheckboxChange = (email: string) => {
     setCheckedIds((prev) => {
-      // tous les emails cochés sont stockés ici
       const newChecked = new Set(prev);
       if (newChecked.has(email)) {
         newChecked.delete(email);
       } else {
         newChecked.add(email);
       }
+      newChecked.delete("");
       return newChecked;
     });
   };
+
+  const handleAllCheckboxes = (checked: boolean) => {
+    if (checked && data) {
+      const allEmails = new Set<string>(
+        data.map((adherent: Adherent) => adherent.emailAdherent)
+      );
+      allEmails.delete("");
+      setCheckedIds(allEmails);
+    } else {
+      setCheckedIds(new Set<string>());
+    }
+  };
+
+  // checkIds recupere tous les emails cochés
+  // console.log(checkedIds);
 
   if (isLoading) return <div>Chargement...</div>;
   if (isError) return <div>Error</div>;
@@ -121,7 +136,12 @@ export const TableauAdherent = () => {
       <Table>
         <TableHeader className="bg-gray-100 ">
           <TableRow>
-            <TableHead className="w-[100px]">Selection</TableHead>
+            <TableHead className="w-[100px]">
+              <input
+                type="checkbox"
+                onChange={(e) => handleAllCheckboxes(e.target.checked)}
+              />
+            </TableHead>
             <TableHead>Nom Prénom</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Téléphone</TableHead>
