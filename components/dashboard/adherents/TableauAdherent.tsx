@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { Trash2, Search, BadgeCheck, BadgeX } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ interface Adherent {
   emailAdherent: string;
   telephoneAdherent: string;
   benevolAdherent: boolean;
+  createdAt: Date;
 }
 
 export const TableauAdherent = () => {
@@ -87,26 +89,32 @@ export const TableauAdherent = () => {
 
   return (
     <>
-      <div className="flex items-center  gap-2 my-8">
-        <Search />
-        <Input
-          type="text"
-          placeholder="Chercher par nom, email ou téléphone..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className=" p-2 border rounded w-[400px] "
-        />
-        <div className="p-2 flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2 my-8">
+        <div className="inline-block text-sm py-2 px-4 bg-gray-100 rounded-lg mr-8">
+          <p>
+            {data.length} {data.length === 1 ? "adhérent" : "adhérents"}
+          </p>
+        </div>
+        <div className="flex  items-center gap-2">
+          <Search />
           <Input
-            id="showOnlyVolunteers"
-            className="size-4"
-            type="checkbox"
-            checked={showOnlyVolunteers}
-            onChange={(e) => setShowOnlyVolunteers(e.target.checked)}
+            type="text"
+            placeholder="Chercher par nom, email ou téléphone..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className=" p-2 border rounded w-[400px] "
           />
-          <Label htmlFor="showOnlyVolunteers" className="text-gray-600">
-            Afficher uniquement les bénévoles
-          </Label>
+          <div className="p-2 flex items-center gap-2">
+            <Switch
+              id="showOnlyVolunteers"
+              checked={showOnlyVolunteers}
+              onCheckedChange={setShowOnlyVolunteers}
+            />
+            <Label htmlFor="showOnlyVolunteers" className="text-gray-600">
+              Afficher uniquement les bénévoles
+            </Label>
+            <BadgeCheck className="text-emerald-500 size-4" />
+          </div>
         </div>
       </div>
 
@@ -118,6 +126,7 @@ export const TableauAdherent = () => {
             <TableHead>Email</TableHead>
             <TableHead>Téléphone</TableHead>
             <TableHead>Bénévole</TableHead>
+            <TableHead>Depuis le</TableHead>
             <TableHead className="text-right">Suppression</TableHead>
           </TableRow>
         </TableHeader>
@@ -155,6 +164,10 @@ export const TableauAdherent = () => {
                   <BadgeX className="text-red-500" />
                 )}
               </TableCell>
+              <TableCell>
+                {new Date(adherent.createdAt).toLocaleDateString()}
+              </TableCell>
+
               <TableCell className="text-right flex items-center justify-end">
                 <Trash2
                   className="hover:text-red-400 text-gray-400 cursor-pointer"

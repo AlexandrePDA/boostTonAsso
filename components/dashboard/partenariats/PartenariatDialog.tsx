@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { UserRoundPlus } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { AddAdherentSchema } from "@/lib/formSchema";
+import { AddPartenaireSchema } from "@/lib/formSchema";
 import {
   Form,
   FormControl,
@@ -22,40 +22,40 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
-const AdherentDialog = () => {
+const PartenariatDialog = () => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
-  const form = useForm<z.infer<typeof AddAdherentSchema>>({
-    resolver: zodResolver(AddAdherentSchema),
+  const form = useForm<z.infer<typeof AddPartenaireSchema>>({
+    resolver: zodResolver(AddPartenaireSchema),
     defaultValues: {
       name: "",
-      benevole: false,
-      telephone: "",
-      email: "",
+      secteur: "",
+      contact: "",
+      commentaire: "",
     },
   });
 
-  const addAdherentMutation = useMutation(
-    async (newAdherent: z.infer<typeof AddAdherentSchema>) => {
-      const response = await fetch("/api/addNewAdherent", {
+  const addPartenaireMutation = useMutation(
+    async (addNewPartenaire: z.infer<typeof AddPartenaireSchema>) => {
+      const response = await fetch("/api/addNewPartenaire", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newAdherent),
+        body: JSON.stringify(addNewPartenaire),
       });
-      if (!response.ok) throw new Error("Failed to add adherent");
+      if (!response.ok) throw new Error("Failed to add partenaire");
       return response.json();
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("adherents");
-        toast.success("Adhérent ajouté avec succès ! 🎉");
+        queryClient.invalidateQueries("partenariats");
+        toast.success("Partenaire ajouté avec succès ! 🎉");
         setIsOpen(false);
         form.reset();
       },
@@ -65,12 +65,12 @@ const AdherentDialog = () => {
     }
   );
 
-  const onSubmit = (values: z.infer<typeof AddAdherentSchema>) => {
+  const onSubmit = (values: z.infer<typeof AddPartenaireSchema>) => {
     if (values.name === "") {
       toast.error("Erreur");
       return;
     }
-    addAdherentMutation.mutate(values);
+    addPartenaireMutation.mutate(values);
   };
 
   return (
@@ -80,7 +80,7 @@ const AdherentDialog = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Ajouter un nouvel adhérent 🎉</DialogTitle>
+          <DialogTitle>Ajouter un nouveau partenaire 🎉</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -89,27 +89,10 @@ const AdherentDialog = () => {
           >
             <FormField
               control={form.control}
-              name="benevole"
-              render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center gap-4">
-                  <FormLabel className="text-right">Bénévole</FormLabel>
-                  <FormControl>
-                    <Switch
-                      className="col-span-3"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem className="grid grid-cols-4 items-center gap-4">
-                  <FormLabel className="text-right">Nom Prénom</FormLabel>
+                  <FormLabel className="text-right">Nom</FormLabel>
                   <FormControl>
                     <Input className="col-span-3" {...field} />
                   </FormControl>
@@ -120,10 +103,10 @@ const AdherentDialog = () => {
 
             <FormField
               control={form.control}
-              name="email"
+              name="contact"
               render={({ field }) => (
                 <FormItem className="grid grid-cols-4 items-center gap-4">
-                  <FormLabel className="text-right">Email</FormLabel>
+                  <FormLabel className="text-right">Contact</FormLabel>
                   <FormControl>
                     <Input className="col-span-3" {...field} />
                   </FormControl>
@@ -134,12 +117,26 @@ const AdherentDialog = () => {
 
             <FormField
               control={form.control}
-              name="telephone"
+              name="secteur"
               render={({ field }) => (
                 <FormItem className="grid grid-cols-4 items-center gap-4 ">
-                  <FormLabel className="text-right">Téléphone</FormLabel>
+                  <FormLabel className="text-right">Secteur</FormLabel>
                   <FormControl>
                     <Input className="col-span-3" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="commentaire"
+              render={({ field }) => (
+                <FormItem className="grid grid-cols-4 items-center gap-4">
+                  <FormLabel className="text-right">Commentaire</FormLabel>
+                  <FormControl>
+                    <Textarea className="col-span-3" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -153,4 +150,4 @@ const AdherentDialog = () => {
   );
 };
 
-export default AdherentDialog;
+export default PartenariatDialog;

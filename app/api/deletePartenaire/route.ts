@@ -2,7 +2,9 @@ import { authOptions } from "@/lib/authOptions";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 
-export async function GET(req: Request) {
+export async function DELETE(req: Request) {
+  const body = await req.json();
+  const { id } = body;
   const session = await getServerSession(authOptions);
   if (!session) {
     return new Response(JSON.stringify({ message: "Unauthorized" }), {
@@ -10,24 +12,18 @@ export async function GET(req: Request) {
     });
   }
 
-  const userId = session?.user.id;
-
   try {
-    const adherents = await prisma.adherent.findMany({
+    const deletedPartenaire = await prisma.partenariats.delete({
       where: {
-        userId: userId,
-      },
-      orderBy: {
-        createdAt: "desc",
+        id,
       },
     });
-
-    return new Response(JSON.stringify(adherents), {
+    return new Response(JSON.stringify({ message: "Partenaire deleted" }), {
       status: 200,
     });
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: "Erreur lors de la récupération des adhérents" }),
+      JSON.stringify({ message: "Error deleting partenaire" }),
       {
         status: 500,
       }

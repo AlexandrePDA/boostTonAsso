@@ -109,7 +109,9 @@ model Partenariats {
   id              String   @id @default(cuid())
   userId          String
   namePartenariat String
-  domaine         String?
+  secteur         String?
+  commentaire     String?
+  contact         String?
   createdAt       DateTime @default(now())
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

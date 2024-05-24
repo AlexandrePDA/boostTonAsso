@@ -72,7 +72,7 @@ export const SideBar = ({ nameAsso }: PropsSideBar) => {
           >
             <div className="flex items-center gap-2">
               <HeartHandshake />
-              <span className="mx-2 text-sm font-medium">Partenariats</span>
+              <span className="mx-2 text-sm font-medium">Partenaires</span>
             </div>
           </Link>
 

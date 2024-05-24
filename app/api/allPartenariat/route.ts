@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   const userId = session?.user.id;
 
   try {
-    const adherents = await prisma.adherent.findMany({
+    const partenariat = await prisma.partenariats.findMany({
       where: {
         userId: userId,
       },
@@ -22,7 +22,8 @@ export async function GET(req: Request) {
       },
     });
 
-    return new Response(JSON.stringify(adherents), {
+    console.log(partenariat);
+    return new Response(JSON.stringify(partenariat), {
       status: 200,
     });
   } catch (error) {
