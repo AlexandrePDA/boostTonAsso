@@ -52,6 +52,7 @@ model User {
   idea                     Idea[]
   team                     Team[]
   partenariats             Partenariats[]
+  calendar                 Calendar[]
   createdAt                DateTime       @default(now())
   resetPasswordToken       String?        @unique
   resetPasswordTokenExpiry DateTime?
@@ -114,6 +115,15 @@ model Partenariats {
   contact         String?
   createdAt       DateTime @default(now())
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Calendar {
+  id         String   @id @default(cuid())
+  userId     String
+  nameEvent  String
+  startEvent DateTime
+  endEvent   DateTime
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

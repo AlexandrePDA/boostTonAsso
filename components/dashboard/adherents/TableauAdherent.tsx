@@ -11,12 +11,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
-import { Trash2, Search, BadgeCheck, BadgeX } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Trash2,
+  Search,
+  BadgeCheck,
+  BadgeX,
+  Mail,
+  RotateCw,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import DataEmpty from "@/components/DataEmpty";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface Adherent {
   id: string;
@@ -37,17 +45,39 @@ export const TableauAdherent = () => {
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
   const [showOnlyVolunteers, setShowOnlyVolunteers] = useState(false);
 
-  const handleCheckboxChange = (email: string) => {
-    setCheckedIds((prev) => {
-      const newChecked = new Set(prev);
-      if (newChecked.has(email)) {
-        newChecked.delete(email);
-      } else {
-        newChecked.add(email);
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "c" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        const emailsToCopy = Array.from(checkedIds).join(", ");
+        navigator.clipboard
+          .writeText(emailsToCopy)
+          .then(() => toast.success("Emails copiés avec succès!"))
+          .catch((err) => toast.error("Erreur lors de la copie des emails"));
       }
-      newChecked.delete("");
-      return newChecked;
-    });
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [checkedIds]);
+
+  const handleCheckboxChange = (email: string) => {
+    if (email !== "") {
+      setCheckedIds((prev) => {
+        const newChecked = new Set(prev);
+        if (newChecked.has(email)) {
+          newChecked.delete(email);
+        } else {
+          newChecked.add(email);
+        }
+        newChecked.delete("");
+        return newChecked;
+      });
+    } else {
+      toast.error("Cet adhérent n'a pas d'email");
+    }
   };
 
   const handleAllCheckboxes = (checked: boolean) => {
@@ -62,11 +92,13 @@ export const TableauAdherent = () => {
     }
   };
 
-  // checkIds recupere tous les emails cochés
-  // console.log(checkedIds);
-
-  if (isLoading) return <div>Chargement...</div>;
-  if (isError) return <div>Error</div>;
+  if (isLoading)
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <RotateCw className="size-8 animate-spin text-gray-500" />
+      </div>
+    );
+  if (isError) return <div>Erreur lors du chargement des adhérents</div>;
 
   const filteredData = data.filter((adherent: Adherent) => {
     const matchesSearchTerm =
@@ -131,6 +163,24 @@ export const TableauAdherent = () => {
             <BadgeCheck className="text-emerald-500 size-4" />
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center gap-2 border bg-slate-50  rounded-lg p-2 mb-4  cursor-pointer">
+        <Mail className="w-4 h-4 text-gray-500 " />
+        {checkedIds.size > 0 ? (
+          <>
+            <p className="text-sm text-gray-500">
+              {Array.from(checkedIds).join(", ")}
+            </p>
+            <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 ">
+              <span className="text-lg">⌘</span>C
+            </kbd>
+          </>
+        ) : (
+          <p className="text-sm text-gray-500">
+            Selectionner un ou plusieurs adhérents pour copier leurs emails
+          </p>
+        )}
       </div>
 
       <Table>

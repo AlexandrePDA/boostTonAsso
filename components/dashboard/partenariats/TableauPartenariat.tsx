@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
-import { Trash2, Search, BadgeCheck, BadgeX } from "lucide-react";
+import { Trash2, Search, BadgeCheck, BadgeX, RotateCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import DataEmpty from "@/components/DataEmpty";
@@ -35,8 +35,13 @@ export const TableauPartenariat = () => {
     fetchPartenariats
   );
 
-  if (isLoading) return <div>Chargement...</div>;
-  if (error) return <div>Error</div>;
+  if (isLoading)
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <RotateCw className="size-8 animate-spin text-gray-500" />
+      </div>
+    );
+  if (error) return <div>Erreur lors du chargement des partenaires</div>;
 
   const filteredData = data.filter((partenaire: Partenariat) => {
     return (
