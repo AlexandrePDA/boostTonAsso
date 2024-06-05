@@ -118,12 +118,13 @@ model Partenariats {
 }
 
 model Calendar {
-  id         String   @id @default(cuid())
-  userId     String
-  nameEvent  String
-  startEvent DateTime
-  endEvent   DateTime
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  start     String
+  end       String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

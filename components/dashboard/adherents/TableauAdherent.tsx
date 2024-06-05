@@ -24,7 +24,6 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import DataEmpty from "@/components/DataEmpty";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface Adherent {
   id: string;

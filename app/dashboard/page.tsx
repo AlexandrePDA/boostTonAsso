@@ -1,16 +1,17 @@
+"use client";
 import Calendar from "@/components/Calendar";
-import { authOptions } from "@/lib/authOptions";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
+import { QueryClient, QueryClientProvider } from "react-query";
 
-export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session) return redirect("/");
+export default function DashboardPage() {
+  const queryClient = new QueryClient();
 
   return (
-    <div className="flex border m-4 rounded-xl  p-4">
-      <Calendar />
+    <div className="flex flex-col p-2 m-4 xl:flex-row">
+      {/* <div className="border p-2 m-4 rounded-xl"> */}
+      <QueryClientProvider client={queryClient}>
+        <Calendar />
+        <div>Graphique</div>
+      </QueryClientProvider>
     </div>
   );
 }

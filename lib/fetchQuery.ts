@@ -15,3 +15,12 @@ export const fetchPartenariats = async () => {
     throw new Error("Erreur lors de la récupération des adhérents");
   }
 };
+
+export const fetchEventCalendar = async () => {
+  try {
+    const response = await fetch("/api/allEventCalendar");
+    return response.json();
+  } catch (error) {
+    throw new Error("Erreur lors de la récupération des adhérents");
+  }
+};
