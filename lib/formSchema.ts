@@ -28,3 +28,13 @@ export const AddEventCalendarSchema = z.object({
   start: z.string(),
   end: z.string(),
 });
+
+export const ModifyEventCalendarSchema = z.object({
+  title: z
+    .string()
+    .min(2, { message: "Le nom doit contenir au moins 2 caractères" })
+    .max(50, { message: "Le nom ne peut pas dépasser 50 caractères" }),
+  start: z.string(),
+  end: z.string(),
+  id: z.string(),
+});

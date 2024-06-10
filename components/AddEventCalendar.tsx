@@ -23,7 +23,6 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "./ui/sheet";
 
 interface AddEventCalendarProps {
@@ -34,6 +33,7 @@ interface AddEventCalendarProps {
 const AddEventCalendar = ({ open, date }: AddEventCalendarProps) => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
+  console.log(date);
 
   useEffect(() => {
     if (open !== false && date !== "") {
@@ -90,7 +90,6 @@ const AddEventCalendar = ({ open, date }: AddEventCalendarProps) => {
       toast.error("Erreur, les champs sont vides");
       return;
     }
-
     const startEvent = `${date}T${values.start}:00`;
     const endEvent = `${date}T${values.end}:00`;
 

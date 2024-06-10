@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/authOptions";
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   try {
-    let { title, start, end } = await request.json();
+    let { title, start, end, id } = await request.json();
 
     if (new Date(end) <= new Date(start)) {
       const temp = end;
@@ -14,15 +14,18 @@ export async function POST(request: Request) {
       start = temp;
     }
 
-    if (title === "" || start === "" || end === "")
+    if (title === "" || start === "" || end === "" || id === "")
       return NextResponse.json(
         { message: "error fields are empty" },
         { status: 400 }
       );
 
-    const newEventCalendar = await prisma.calendar.create({
-      data: {
+    const modifyEventCalendar = await prisma.calendar.update({
+      where: {
+        id,
         userId: session?.user.id,
+      },
+      data: {
         title,
         start,
         end,
@@ -30,7 +33,7 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ message: "succes " });
+    return NextResponse.json({ message: "succès " });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ message: "error " }, { status: 400 });

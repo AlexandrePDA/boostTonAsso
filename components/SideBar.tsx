@@ -20,7 +20,6 @@ interface PropsSideBar {
 export const SideBar = ({ nameAsso }: PropsSideBar) => {
   const pathname = usePathname();
 
-  console.log(pathname);
   return (
     <aside className="sticky top-0 flex flex-col w-64 h-screen px-5 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
       <h2 className="mx-2 mb-4">Nom du site</h2>
